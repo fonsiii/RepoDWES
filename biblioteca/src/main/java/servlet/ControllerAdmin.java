@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Servlet implementation class ControllerAdmin
@@ -27,6 +28,16 @@ public class ControllerAdmin extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
+	       response.setContentType("text/html;charset=UTF-8");
+	       PrintWriter out=response.getWriter();
+	       out.println("<TABLE border=1>");
+	       for (int i=1;i<=3;i++) {
+	           out.println("\t\t<tr>");
+	           for (int j=1;j<=3;j++)
+	               out.println("\t\t\t<td>"+((i-1)*3+j)+"</td>");
+	           out.println("\t\t</tr>");
+	       }
+	       out.println("</TABLE>");
 	}
 
 	/**
