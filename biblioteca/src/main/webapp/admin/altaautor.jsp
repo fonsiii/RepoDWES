@@ -1,7 +1,7 @@
 <%@taglib uri="jakarta.tags.core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    
+	pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,11 +24,14 @@
 			</div>
 		</c:if>
 		<c:if test="${confirmaroperacion != null}">
-		
+
 			<div class="divconfirmacion">
 				<p>
 					<strong><c:out value="Mensaje" /></strong> <br>
 					<c:out value="${confirmaroperacion}" />
+					<script>
+						window.history.replaceState(null, null,"admin/altaautor.jsp")
+					</script>
 				</p>
 			</div>
 		</c:if>
@@ -36,35 +39,31 @@
 			<form name="frmAutor" method="post"
 				action="${pageContext.request.contextPath}/controlleradmin">
 				<fieldset id="datosAutor">
-					<legend><img src="${pageContext.request.contextPath}/resources/img/azarquiel.gif">&nbsp;Nuevo Autor</legend>
+					<legend>
+						<img
+							src="${pageContext.request.contextPath}/resources/img/azarquiel.gif">&nbsp;Nuevo
+						Autor
+					</legend>
 					<div class="etiquetas">
 						<label for="nombre">Nombre:</label>
 					</div>
 					<div class="campos">
-						<input type="text" 
-						       id="nombre" 
-						       name="nombre"
-						       value="${nuevoautor.nombre}" />
+						<input type="text" id="nombre" name="nombre"
+							value="${nuevoautor.nombre}" />
 					</div>
 					<div class="cb"></div>
 					<div class="etiquetas">
 						<label for="fechaNacimiento">Fecha Nacimiento:</label>
 					</div>
 					<div class="campos">
-						<input type="date" 
-						       id="fechaNacimiento" 
-						       placeholder="dd-MM-yyyy"
-						       name="fechaNacimiento" 
-						       value="${fechaErronea}"
-						       required/>
-						<input name="operacion" 
-						       type="hidden" 
-						       id="operacion" 
-						       value="insertaautor">
+						<input type="date" id="fechaNacimiento" placeholder="dd-MM-yyyy"
+							name="fechaNacimiento" value="${fechaErronea}" required /> <input
+							name="operacion" type="hidden" id="operacion"
+							value="insertaautor">
 					</div>
 					<div class="cb"></div>
-					<div class="botones">	
-							<input type="submit" name="Submit" value="Guardar">
+					<div class="botones">
+						<input type="submit" name="Submit" value="Guardar">
 					</div>
 				</fieldset>
 			</form>

@@ -19,4 +19,14 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>ControllerSocio</display-name>
+    <servlet-name>ControllerSocio</servlet-name>
+    <servlet-class>servlet.ControllerSocio</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ControllerSocio</servlet-name>
+    <url-pattern>/ControllerSocio</url-pattern>
+  </servlet-mapping>
 </web-app>
