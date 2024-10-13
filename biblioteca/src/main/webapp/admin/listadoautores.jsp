@@ -26,8 +26,14 @@
 			<h1>LISTADO DE AUTORES</h1>
 			<% ArrayList<Autor> autores = (ArrayList<Autor>)session.getAttribute("autores"); %>
 			<table class="table tablaconborde tablacebra tabla-hover">
+				<tr>
+					<th>ID de autor</th>
+					<th>Nombre</th>
+					<th>Fecha de nacimiento</th>	
+				</tr>
 			<c:forEach items="${autores}" var="autor">
 				<tr>
+					<td>${ autor.getIdAutor() }</td>
 					<td>${ autor.getNombre() }</td>
 					<td>
 					   <fmt:formatDate value="${autor.getFechaNacimiento()}" pattern="dd/MM/yyyy" />
