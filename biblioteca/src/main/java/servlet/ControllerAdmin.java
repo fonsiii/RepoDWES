@@ -56,7 +56,7 @@ public class ControllerAdmin extends HttpServlet {
 		try {
 			Autor nuevoAutor = new Autor();
 			nuevoAutor.setNombre(nombre);
-			SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
 			java.util.Date fechaUtil = formatoFecha.parse(fechaNacimientoStr);
 			java.sql.Date fechaNacimiento = new java.sql.Date(fechaUtil.getTime());
 			nuevoAutor.setFechaNacimiento(fechaNacimiento);
