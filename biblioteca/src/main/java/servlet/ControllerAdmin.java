@@ -48,12 +48,12 @@ public class ControllerAdmin extends HttpServlet {
 			try {
 				ArrayList<Autor> listado = dao.listadoAutores();
 				request.setAttribute("autores", listado);
-			} catch (SQLException e) {
+			} catch (SQLException sqle) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception ex) {
+				procesarErrorSql(request, response, sqle, "admin/listadoautores.jsp");
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				ex.printStackTrace();
+				procesarError(request, response, e, "admin/listadoautores.jsp");
 			}
 		    dispatcher.forward(request, response);
 		    break;
@@ -89,16 +89,37 @@ public class ControllerAdmin extends HttpServlet {
 			
 		} catch (ParseException e) {
 	        request.setAttribute("error", "Fecha de nacimiento no válida: " + e.getMessage());
-	    } catch (SQLException e) {
-	        request.setAttribute("error", "Error al insertar el autor: " + e.getMessage());
+	    } catch (SQLException sqle) {
+	        procesarErrorSql(request, response, sqle, "admin/altaautor.jsp");
 	    } catch (Exception e) {
-	        request.setAttribute("error", "Error inesperado: " + e.getMessage());
+	        procesarError(request, response, e, "admin/altaautor.jsp");
 	    }
 		request.getRequestDispatcher("admin/altaautor.jsp").forward(request, response);
-		
-		
-		
-
 	}
-
+	
+	protected void procesarError(HttpServletRequest request, HttpServletResponse response , Exception e, String url) throws ServletException, IOException{
+		String mensajeError = e.getMessage();
+		request.setAttribute("error", mensajeError);
+		request.getRequestDispatcher("admin/error.jsp").forward(request, response);
+		if(url==null) {
+			url="admin/error.jsp";
+		}	
+	}
+	protected void procesarErrorSql(HttpServletRequest request, HttpServletResponse response , SQLException sqle, String url) throws ServletException, IOException{
+		int codigoError = sqle.getErrorCode();
+		String mensajeError;
+		switch (codigoError) {
+		case 30006:
+			mensajeError = "Registro en proceso de modificacion.Intentelo mas tarde";
+			break;
+			default:
+				mensajeError = sqle.getMessage();
+		}
+		request.setAttribute("error", mensajeError);
+		request.getRequestDispatcher("admin/error.jsp").forward(request, response);
+		if(url==null) {
+			url="admin/error.jsp";
+		}	
+	}
+	
 }

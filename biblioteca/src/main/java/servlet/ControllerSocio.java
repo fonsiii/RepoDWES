@@ -45,12 +45,12 @@ public class ControllerSocio extends HttpServlet {
 				try {
 					ArrayList<Socio> listado = dao.listadoSocios();
 					request.setAttribute("socios", listado);
-				} catch (SQLException e) {
+				} catch (SQLException sqle) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (Exception ex) {
+					procesarErrorSql(request, response, sqle, "socio/listadosocios.jsp");
+					} catch (Exception e) {
 					// TODO Auto-generated catch block
-					ex.printStackTrace();
+						procesarError(request, response, e, "socio/listadosocios.jsp");
 				}
 			    dispatcher.forward(request, response);
 
@@ -83,11 +83,36 @@ public class ControllerSocio extends HttpServlet {
 			dao.insertaSocio(nuevoSocio);
 			request.setAttribute("confirmaroperacion", "El socio ha sido creado correctamente");	
 		}
-	    catch (SQLException e) {
-	        request.setAttribute("error", "Error al insertar el socio: " + e.getMessage());
+	    catch (SQLException sqle) {
+			procesarErrorSql(request, response, sqle, "socio/altasocio.jsp");
 	    } catch (Exception e) {
-	        request.setAttribute("error", "Error inesperado: " + e.getMessage());
+			procesarError(request, response, e, "socio/altasocio.jsp");
 	    }
 		request.getRequestDispatcher("socio/altasocio.jsp").forward(request, response);	}
+	
+	protected void procesarError(HttpServletRequest request, HttpServletResponse response , Exception e, String url) throws ServletException, IOException{
+		String mensajeError = e.getMessage();
+		request.setAttribute("error", mensajeError);
+		request.getRequestDispatcher("admin/error.jsp").forward(request, response);
+		if(url==null) {
+			url="admin/error.jsp";
+		}	
+	}
+	protected void procesarErrorSql(HttpServletRequest request, HttpServletResponse response , SQLException sqle, String url) throws ServletException, IOException{
+		int codigoError = sqle.getErrorCode();
+		String mensajeError;
+		switch (codigoError) {
+		case 30006:
+			mensajeError = "Registro en proceso de modificacion.Intentelo mas tarde";
+			break;
+			default:
+				mensajeError = sqle.getMessage();
+		}
+		request.setAttribute("error", mensajeError);
+		request.getRequestDispatcher("admin/error.jsp").forward(request, response);
+		if(url==null) {
+			url="admin/error.jsp";
+		}	
+	}
 
 }
