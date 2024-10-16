@@ -1,4 +1,4 @@
-<%@page import="entidades.Autor"%>
+<%@page import="entidades.Socio"%>
 <%@page import="java.util.ArrayList"%>
 <%@taglib uri="jakarta.tags.core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -12,7 +12,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Listado de autores</title>
+<title>Listado de socios</title>
 
 <jsp:directive.include file="/includes/includefile.jspf" />
 </head>
@@ -24,23 +24,26 @@
 		<div class="menu">
 			<jsp:directive.include file="/WEB-INF/menu.jspf" />
 		</div>
-			<h1>LISTADO DE AUTORES</h1>
+			<h1>LISTADO DE SOCIOS</h1>
 		<%
-		ArrayList<Autor> autores = (ArrayList<Autor>) session.getAttribute("autores");
+		ArrayList<Socio> socios = (ArrayList<Socio>) session.getAttribute("socios");
 		%>
 		<div class="w-75 ma">
 			<table class="table tablaconborde tablacebra tabla-hover">
 				<tr>
-					<th>ID de autor</th>
+					<th>ID de socio</th>
 					<th>Nombre</th>
-					<th>Fecha de nacimiento</th>
+					<th>E-mail</th>
+					<th>Direccion</th>
+					<th>Version</th>
 				</tr>
-				<c:forEach items="${autores}" var="autor">
+				<c:forEach items="${socios}" var="socio">
 					<tr>
-						<td class="txtcentrado">${ autor.getIdAutor() }</td>
-						<td class="txtcentrado">${ autor.getNombre() }</td>
-						<td class="txtcentrado"><fmt:formatDate
-								value="${autor.getFechaNacimiento()}" pattern="dd/MM/yyyy" /></td>
+						<td class="txtcentrado">${ socio.getIdSocio() }</td>
+						<td class="txtcentrado">${ socio.getNombre() }</td>
+						<td class="txtcentrado">${ socio.getEmail() }</td>
+						<td class="txtcentrado">${ socio.getDireccion() }</td>
+						<td class="txtcentrado">${ socio.getVersion() }</td>
 					</tr>
 				</c:forEach>
 			</table>

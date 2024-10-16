@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>HOME</title>
 
 <jsp:directive.include file="/includes/includefile.jspf"/>
 </head>
@@ -16,6 +16,5 @@
 			<jsp:directive.include file="/WEB-INF/menu.jspf"/>
 		</div>
 	</div>
-	<fmt:formatNumber></fmt:formatNumber>
 </body>
 </html>

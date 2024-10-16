@@ -8,10 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
-import dao.DaoAutor;
-import entidades.Autor;
+import dao.DaoSocio;
+import entidades.Socio;
 
 /**
  * Servlet implementation class ControllerSocio
@@ -36,12 +37,12 @@ public class ControllerSocio extends HttpServlet {
 	    RequestDispatcher dispatcher;
 	    dispatcher = request.getRequestDispatcher("home.jsp");
 		String operacion = request.getParameter("operacion");
-	    if (operacion.equals("listarAutores")) {
-	      dispatcher = request.getRequestDispatcher("admin/listadoautores.jsp");
-			DaoAutor dao=new DaoAutor();
+	    if (operacion.equals("listarSocios")) {
+	      dispatcher = request.getRequestDispatcher("socio/listadosocios.jsp");
+			DaoSocio dao=new DaoSocio();
 			try {
-				ArrayList<Autor> listado = dao.listadoAutores();
-				request.setAttribute("autores", listado);
+				ArrayList<Socio> listado = dao.listadoSocios();
+				request.setAttribute("socios", listado);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -58,7 +59,30 @@ public class ControllerSocio extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
+		String nombre = request.getParameter("nombre");
+		String direccion = request.getParameter("direccion");
+		String email = request.getParameter("email");		
+		if (nombre == null || nombre.trim().isEmpty() || nombre == null || direccion == null || direccion.trim().isEmpty() || email == null || email.trim().isEmpty()) {
+			request.setAttribute("error", "Nombre y fecha de nacimiento son obligatorios");
+			request.getRequestDispatcher("socio/altasocio.jsp").forward(request, response);
+			return;
+		}
+		
+		try {
+			Socio nuevoSocio = new Socio();
+			nuevoSocio.setNombre(nombre);
+			nuevoSocio.setDireccion(direccion);
+			nuevoSocio.setEmail(email);
+			nuevoSocio.setVersion(1);
+			DaoSocio dao=new DaoSocio();
+			dao.insertaSocio(nuevoSocio);
+			request.setAttribute("confirmaroperacion", "El socio ha sido creado correctamente");	
+		}
+	    catch (SQLException e) {
+	        request.setAttribute("error", "Error al insertar el socio: " + e.getMessage());
+	    } catch (Exception e) {
+	        request.setAttribute("error", "Error inesperado: " + e.getMessage());
+	    }
+		request.getRequestDispatcher("socio/altasocio.jsp").forward(request, response);	}
 
 }

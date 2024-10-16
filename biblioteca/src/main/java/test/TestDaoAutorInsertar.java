@@ -7,9 +7,7 @@ import dao.DaoAutor;
 import entidades.Autor;
 
 public class TestDaoAutorInsertar {
-	public TestDaoAutorInsertar() {
-		// TODO Auto-generated constructor stub
-	}
+
 	public static void main(String[] args) {
 		Autor a=new Autor();
 		java.util.Date fecha=new Date();

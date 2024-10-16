@@ -1,5 +1,6 @@
 package servlet;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import dao.DaoAutor;
 import entidades.Autor;
@@ -36,8 +38,24 @@ public class ControllerAdmin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
+	    RequestDispatcher dispatcher;
+	    dispatcher = request.getRequestDispatcher("home.jsp");
+		String operacion = request.getParameter("operacion");
+	    if (operacion.equals("listarAutores")) {
+	      dispatcher = request.getRequestDispatcher("admin/listadoautores.jsp");
+			DaoAutor dao=new DaoAutor();
+			try {
+				ArrayList<Autor> listado = dao.listadoAutores();
+				request.setAttribute("autores", listado);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+	    }
+	    dispatcher.forward(request, response);	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

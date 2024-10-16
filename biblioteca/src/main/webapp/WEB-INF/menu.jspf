@@ -3,10 +3,10 @@
       <ul>
 
          <li><a
-            href="${pageContext.request.contextPath}/altasocio.jsp">Nuevo
+            href="${pageContext.request.contextPath}/socio/altasocio.jsp">Nuevo
                Socio</a></li>
          <li><a
-            href="${pageContext.request.contextPath}/controller?operacion=listarSocios">Listado
+            href="${pageContext.request.contextPath}/controllerSocio?operacion=listarSocios">Listado
                Socios</a></li>
             <li><a
                href="${pageContext.request.contextPath}/admin/getsocio.jsp">Modificar
@@ -25,7 +25,7 @@
             href="${pageContext.request.contextPath}/admin/altaautor.jsp">Nuevo
                Autor</a></li>
          <li><a
-            href="${pageContext.request.contextPath}/controllerSocio?operacion=listarAutores">Listado
+            href="${pageContext.request.contextPath}/controlleradmin?operacion=listarAutores">Listado
                de Autores</a></li>
       </ul></li>
    <li><a href="#" class="MenuBarItemSubmenu">Ejemplares</a>
