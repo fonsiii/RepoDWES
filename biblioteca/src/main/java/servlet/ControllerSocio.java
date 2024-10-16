@@ -37,21 +37,26 @@ public class ControllerSocio extends HttpServlet {
 	    RequestDispatcher dispatcher;
 	    dispatcher = request.getRequestDispatcher("home.jsp");
 		String operacion = request.getParameter("operacion");
-	    if (operacion.equals("listarSocios")) {
-	      dispatcher = request.getRequestDispatcher("socio/listadosocios.jsp");
-			DaoSocio dao=new DaoSocio();
-			try {
-				ArrayList<Socio> listado = dao.listadoSocios();
-				request.setAttribute("socios", listado);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-			}
-	    }
-	    dispatcher.forward(request, response);
+		
+		switch (operacion) {
+		case "listarSocios":
+		      dispatcher = request.getRequestDispatcher("socio/listadosocios.jsp");
+				DaoSocio dao=new DaoSocio();
+				try {
+					ArrayList<Socio> listado = dao.listadoSocios();
+					request.setAttribute("socios", listado);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+			    dispatcher.forward(request, response);
+
+			break;
+
+		}
 	}
 
 	/**
@@ -63,7 +68,7 @@ public class ControllerSocio extends HttpServlet {
 		String direccion = request.getParameter("direccion");
 		String email = request.getParameter("email");		
 		if (nombre == null || nombre.trim().isEmpty() || nombre == null || direccion == null || direccion.trim().isEmpty() || email == null || email.trim().isEmpty()) {
-			request.setAttribute("error", "Nombre y fecha de nacimiento son obligatorios");
+			request.setAttribute("error", "Nombre, direccion y email es obligatorio");
 			request.getRequestDispatcher("socio/altasocio.jsp").forward(request, response);
 			return;
 		}

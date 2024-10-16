@@ -41,8 +41,9 @@ public class ControllerAdmin extends HttpServlet {
 	    RequestDispatcher dispatcher;
 	    dispatcher = request.getRequestDispatcher("home.jsp");
 		String operacion = request.getParameter("operacion");
-	    if (operacion.equals("listarAutores")) {
-	      dispatcher = request.getRequestDispatcher("admin/listadoautores.jsp");
+		switch (operacion) {
+		case "listarAutores":
+			dispatcher = request.getRequestDispatcher("admin/listadoautores.jsp");
 			DaoAutor dao=new DaoAutor();
 			try {
 				ArrayList<Autor> listado = dao.listadoAutores();
@@ -54,8 +55,12 @@ public class ControllerAdmin extends HttpServlet {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
+		    dispatcher.forward(request, response);
+		    break;
 	    }
-	    dispatcher.forward(request, response);	}
+			
+		}
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
