@@ -1,93 +1,90 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.Connection; // Importa la clase Connection para manejar la conexión a la base de datos.
+import java.sql.PreparedStatement; // Importa PreparedStatement para ejecutar consultas parametrizadas.
+import java.sql.ResultSet; // Importa ResultSet para almacenar los resultados de una consulta SQL.
+import java.sql.SQLException; // Importa SQLException para manejar errores de SQL.
+import java.util.ArrayList; // Importa ArrayList para utilizar listas dinámicas.
 
-import conexion.Conexion;
-import entidades.Autor;
+import conexion.Conexion; // Importa la clase Conexion para obtener conexiones a la base de datos.
+import entidades.Autor; // Importa la clase Autor que representa la entidad Autor.
 
 public class DaoAutor {
-	/**
-	 *
-	 * @return Devuelve un ArrayList de objetos autor con los autores hay
-	 *         actualmente en la tabla AUTOR de nuestra base de datos.
-	 * @throws SQLException: Cualquier error en el acceso o en la ejecución
-	 */
-	public ArrayList<Autor> listadoAutores() throws SQLException, Exception {
 
-		ArrayList<Autor> listadoAutores = new ArrayList<>();
-		Conexion conexion = new Conexion(); // Creamos un objeto Conexion.
-		Connection con = null; // Objeto para conectar a la bbdd.
-		ResultSet rs = null; // Donde recojo los resultados de la consulta
-		PreparedStatement st = null; // Para crear la consulta.
-		try {
-			con = conexion.getConexion(); // Obtenemos el objeto java.sql.Connection
-			// Un objeto Statement permite ejecutar una sentencia SQL estática
-			// y retornar los resultados que produce
-			String ordenSQL = "SELECT * FROM AUTOR ORDER By IDAUTOR"; // sentencia a ejecutar
-			st = con.prepareStatement(ordenSQL);
-			rs = st.executeQuery(ordenSQL);
-			// el método executeQuery ejecuta la sentencia y devuelve los resultados
-			// en un objeto ResultSet
-			// El objeto ResulSet representa el conjunto de resultados de la consulta
-			// Mantiene un cursor a la fila actual de datos
-			// Inicialmente apunta a la primera fila.
-			// El método next mueve el cursor a la siguiente fila
-			// next() devuelve false cuando ha llegado a la última fila.
-			while (rs.next()) {
-				// Por cada fila obtenida, creamos un objeto autor
-				// que añadimos al ArrayList listadoAutores.
-				Autor miAutor = new Autor();
-				miAutor.setIdAutor(rs.getInt("IDAUTOR"));
-				miAutor.setNombre(rs.getString("NOMBRE"));
-				miAutor.setFechaNacimiento(rs.getDate("FECHANACIMIENTO"));
-				listadoAutores.add(miAutor);
-			}
-		} catch (SQLException e) {
-			// e.printStackTrace();
-			throw e;
-		} catch (Exception ex) {
-			// ex.printStackTrace();
-			throw ex;
-		} finally {
-			// liberamos los recursos en un finally para asegurarnos que se cierra
-			// todo lo abierto
-			if (rs != null)
-				rs.close();
-			if (st != null)
-				st.close();
-			if (con != null)
-				con.close();
-		}
-		return listadoAutores; // retornamos el resultado en forma de array
-	}
+    /**
+     * Método que devuelve un ArrayList de objetos Autor.
+     * @return ArrayList<Autor> - lista de autores en la tabla AUTOR de la base de datos.
+     * @throws SQLException - en caso de error en el acceso o ejecución de la consulta.
+     * @throws Exception - cualquier otro error que pueda ocurrir.
+     */
+    public ArrayList<Autor> listadoAutores() throws SQLException, Exception {
+        ArrayList<Autor> listadoAutores = new ArrayList<>(); // Inicializa el ArrayList para almacenar autores.
+        Conexion conexion = new Conexion(); // Crea un objeto de conexión a la base de datos.
+        Connection con = null; // Variable para almacenar la conexión.
+        ResultSet rs = null; // Variable para almacenar el resultado de la consulta.
+        PreparedStatement st = null; // Variable para preparar la consulta SQL.
 
-	public void insertaAutor(Autor a) throws SQLException, Exception {
-		Connection con = null;
-		PreparedStatement st = null;
-		try {
-			Conexion miconex = new Conexion();
-			con = miconex.getConexion();
-			String ordenSQL = "INSERT INTO AUTOR VALUES(S_AUTOR.NEXTVAL,?,?)";
-			st = con.prepareStatement(ordenSQL);
-			st.setString(1, a.getNombre());
-			st.setDate(2, a.getFechaNacimiento());
-			st.executeUpdate();
-			st.close();
-			con.close();
-		} catch (SQLException se) {
-			throw se;
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			if (st != null)
-				st.close();
-			if (con != null)
-				con.close();
-		}
-	}
+        try {
+            con = conexion.getConexion(); // Obtiene la conexión a la base de datos.
+            // SQL para obtener todos los autores ordenados por IDAUTOR.
+            String ordenSQL = "SELECT * FROM AUTOR ORDER By IDAUTOR"; 
+            st = con.prepareStatement(ordenSQL); // Prepara la consulta.
+            rs = st.executeQuery(ordenSQL); // Ejecuta la consulta y almacena el resultado.
+
+            // Itera a través de los resultados del ResultSet.
+            while (rs.next()) {
+                // Crea un nuevo objeto Autor por cada fila obtenida.
+                Autor miAutor = new Autor();
+                // Establece los atributos del autor a partir de los resultados.
+                miAutor.setIdAutor(rs.getInt("IDAUTOR"));
+                miAutor.setNombre(rs.getString("NOMBRE"));
+                miAutor.setFechaNacimiento(rs.getDate("FECHANACIMIENTO"));
+                listadoAutores.add(miAutor); // Añade el autor al ArrayList.
+            }
+        } catch (SQLException e) {
+            // Relanza la excepción si ocurre un error SQL.
+            throw e;
+        } catch (Exception ex) {
+            // Relanza cualquier otro tipo de excepción.
+            throw ex;
+        } finally {
+            // Liberación de recursos en el bloque finally para asegurar que se cierran.
+            if (rs != null) rs.close(); // Cierra el ResultSet si está abierto.
+            if (st != null) st.close(); // Cierra el PreparedStatement si está abierto.
+            if (con != null) con.close(); // Cierra la conexión si está abierta.
+        }
+        return listadoAutores; // Devuelve la lista de autores.
+    }
+
+    /**
+     * Método para insertar un nuevo autor en la base de datos.
+     * @param a - objeto Autor que se desea insertar.
+     * @throws SQLException - en caso de error en el acceso o ejecución de la consulta.
+     * @throws Exception - cualquier otro error que pueda ocurrir.
+     */
+    public void insertaAutor(Autor a) throws SQLException, Exception {
+        Connection con = null; // Variable para almacenar la conexión.
+        PreparedStatement st = null; // Variable para preparar la consulta SQL.
+
+        try {
+            Conexion miconex = new Conexion(); // Crea un nuevo objeto de conexión.
+            con = miconex.getConexion(); // Obtiene la conexión a la base de datos.
+            // SQL para insertar un nuevo autor en la tabla AUTOR.
+            String ordenSQL = "INSERT INTO AUTOR VALUES(S_AUTOR.NEXTVAL,?,?)";
+            st = con.prepareStatement(ordenSQL); // Prepara la consulta para la inserción.
+            st.setString(1, a.getNombre()); // Establece el nombre del autor en la consulta.
+            st.setDate(2, a.getFechaNacimiento()); // Establece la fecha de nacimiento en la consulta.
+            st.executeUpdate(); // Ejecuta la actualización para insertar el autor.
+        } catch (SQLException se) {
+            // Relanza la excepción si ocurre un error SQL.
+            throw se;
+        } catch (Exception e) {
+            // Relanza cualquier otro tipo de excepción.
+            throw e;
+        } finally {
+            // Liberación de recursos en el bloque finally para asegurar que se cierran.
+            if (st != null) st.close(); // Cierra el PreparedStatement si está abierto.
+            if (con != null) con.close(); // Cierra la conexión si está abierta.
+        }
+    }
 }
