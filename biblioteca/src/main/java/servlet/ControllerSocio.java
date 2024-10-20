@@ -11,8 +11,12 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import dao.DaoLibroMoroso;
 import dao.DaoSocio;
+import dao.DaoSocioMoroso;
+import entidades.LibroMoroso;
 import entidades.Socio;
+import entidades.SocioMoroso;
 
 /**
  * Servlet implementation class ControllerSocio
@@ -37,11 +41,13 @@ public class ControllerSocio extends HttpServlet {
 	    RequestDispatcher dispatcher;
 	    dispatcher = request.getRequestDispatcher("home.jsp");
 		String operacion = request.getParameter("operacion");
-		
+        DaoSocio dao = new DaoSocio();
+        DaoSocioMoroso daoMoroso = new DaoSocioMoroso();
+
+        
 		switch (operacion) {
 		case "listarSocios":
 		      dispatcher = request.getRequestDispatcher("socio/listadosocios.jsp");
-				DaoSocio dao=new DaoSocio();
 				try {
 					ArrayList<Socio> listado = dao.listadoSocios();
 					request.setAttribute("socios", listado);
@@ -55,15 +61,63 @@ public class ControllerSocio extends HttpServlet {
 			    dispatcher.forward(request, response);
 
 			break;
+			
+			
+		case "socioslibrosfueraplazo":
+			dispatcher = request.getRequestDispatcher("socio/sociosmorosos.jsp");
+		try {
+			ArrayList<SocioMoroso> listadoMorosos = daoMoroso.listadoSociosMorosos();
+			request.setAttribute("socios", listadoMorosos);
+		} catch (SQLException sqle) {
+			// TODO Auto-generated catch block
+			procesarErrorSql(request, response, sqle, "socio/sociosmorosos.jsp");
+			} catch (Exception e) {
+			// TODO Auto-generated catch block
+				procesarError(request, response, e, "socio/sociosmorosos.jsp");
+		}
+	    dispatcher.forward(request, response);
+
+	break;
+		case "librosSocioMoroso":
+		    int idSocio = Integer.parseInt(request.getParameter("idSocio"));
+		    DaoLibroMoroso daoLibroMoroso = new DaoLibroMoroso();
+		    ArrayList<LibroMoroso> librosMorosos = null;
+
+		    try {
+		        librosMorosos = daoLibroMoroso.listadoLibrosMorosos(idSocio);
+		        
+		        SocioMoroso socioMoroso = daoMoroso.buscarSocioPorId(idSocio);
+		        
+		        request.setAttribute("socioNombre", socioMoroso.getNombre());
+		        request.setAttribute("librosMorosos", librosMorosos);
+		    } catch (SQLException sqle) {
+		        procesarErrorSql(request, response, sqle, "socio/sociosmorosos.jsp");
+		        return;
+		    } catch (Exception e) {
+		        procesarError(request, response, e, "socio/sociosmorosos.jsp");
+		        return;
+		    }
+
+		    dispatcher = request.getRequestDispatcher("socio/sociosmorosos.jsp");
+		    dispatcher.forward(request, response);
+		    break;
+
+
+
+
+
+			
+    }			
 
 		}
-	}
+	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		DaoSocio dao=new DaoSocio();
 		String nombre = request.getParameter("nombre");
 		String direccion = request.getParameter("direccion");
 		String email = request.getParameter("email");		
@@ -79,7 +133,6 @@ public class ControllerSocio extends HttpServlet {
 			nuevoSocio.setDireccion(direccion);
 			nuevoSocio.setEmail(email);
 			nuevoSocio.setVersion(1);
-			DaoSocio dao=new DaoSocio();
 			dao.insertaSocio(nuevoSocio);
 			request.setAttribute("confirmaroperacion", "El socio ha sido creado correctamente");	
 		}

@@ -23,13 +23,13 @@ public class DaoAutor {
 		Conexion conexion = new Conexion(); // Creamos un objeto Conexion.
 		Connection con = null; // Objeto para conectar a la bbdd.
 		ResultSet rs = null; // Donde recojo los resultados de la consulta
-		Statement st = null; // Para crear la consulta.
+		PreparedStatement st = null; // Para crear la consulta.
 		try {
 			con = conexion.getConexion(); // Obtenemos el objeto java.sql.Connection
-			st = con.createStatement();// Creamos un objeto Statement
 			// Un objeto Statement permite ejecutar una sentencia SQL estática
 			// y retornar los resultados que produce
-			String ordenSQL = "SELECT * FROM AUTOR ORDER By NOMBRE"; // sentencia a ejecutar
+			String ordenSQL = "SELECT * FROM AUTOR ORDER By IDAUTOR"; // sentencia a ejecutar
+			st = con.prepareStatement(ordenSQL);
 			rs = st.executeQuery(ordenSQL);
 			// el método executeQuery ejecuta la sentencia y devuelve los resultados
 			// en un objeto ResultSet

@@ -7,6 +7,9 @@ public class Socio {
 	private String nombre;
 	private String direccion;
 	private int version;
+	
+
+    
 	public int getIdSocio() {
 		return idSocio;
 	}
@@ -37,6 +40,7 @@ public class Socio {
 	public void setVersion(int version) {
 		this.version = version;
 	}
+
 	@Override
 	public String toString() {
 		return "Socio [idSocio=" + idSocio + ", email=" + email + ", nombre=" + nombre + ", direccion=" + direccion

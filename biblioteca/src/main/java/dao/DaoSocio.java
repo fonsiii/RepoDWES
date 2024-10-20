@@ -18,13 +18,13 @@ public class DaoSocio {
 		Conexion conexion = new Conexion();
 		Connection con = null;
 		ResultSet rs = null;
-		Statement st = null;
+		PreparedStatement st = null;
 		
 		try {
 			con = conexion.getConexion();
-			st = con.createStatement();
 			
-			String ordenSQL = "SELECT * FROM SOCIO ORDER BY NOMBRE";
+			String ordenSQL = "SELECT * FROM SOCIO ORDER BY IDSOCIO";
+			st = con.prepareStatement(ordenSQL);
 			rs = st.executeQuery(ordenSQL);
 			
 			while (rs.next()) {
@@ -38,14 +38,11 @@ public class DaoSocio {
 			}
 			
 			} catch (SQLException e) {
-				// e.printStackTrace();
 				throw e;
 			} catch (Exception ex) {
-				// ex.printStackTrace();
 				throw ex;
 			} finally {
-				// liberamos los recursos en un finally para asegurarnos que se cierra
-				// todo lo abierto
+
 				if (rs != null)
 					rs.close();
 				if (st != null)
@@ -53,8 +50,10 @@ public class DaoSocio {
 				if (con != null)
 					con.close();
 			}
-			return listadoSocios; // retornamos el resultado en forma de array
+			return listadoSocios; 
 		}
+
+
 	
 	public void insertaSocio(Socio s) throws SQLException, Exception {
 		Connection con = null;
@@ -64,9 +63,9 @@ public class DaoSocio {
 			con = miconex.getConexion();
 			String ordenSQL = "INSERT INTO SOCIO VALUES(S_AUTOR.NEXTVAL,?,?,?,?)";
 			st = con.prepareStatement(ordenSQL);
-			st.setString(1, s.getNombre());
-			st.setString(2, s.getDireccion());
-			st.setString(3, s.getEmail());
+			st.setString(1, s.getEmail());
+			st.setString(2, s.getNombre());
+			st.setString(3, s.getDireccion());
 			st.setInt(4, s.getVersion());
 			st.executeUpdate();
 			st.close();
@@ -83,5 +82,55 @@ public class DaoSocio {
 		}
 	}
 	
+	public ArrayList<Socio> buscarSocioPorNombre(String nombre) throws SQLException, Exception{
+		ArrayList<Socio> listadoSocios = new ArrayList<>();
+		Conexion miconex = new Conexion();
+		Connection con = null;
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		
+		try {
+			
+			con = miconex.getConexion();
+			String ordenSQL = "SELECT * FROM SOCIO WHERE LOWER(NOMBRE) LIKE LOWER(?)";
+			st = con.prepareStatement(ordenSQL);
+			
+			st.setString(1,"%" + nombre + "%");
+			
+			rs = st.executeQuery();
+			
+			while (rs.next()) {
+				
+				Socio miSocio = new Socio();
+				miSocio.setNombre(rs.getString("NOMBRE"));
+				miSocio.setDireccion(rs.getString("DIRECCION"));
+				miSocio.setEmail(rs.getString("EMAIL"));
+				miSocio.setVersion(rs.getInt("VERSION"));
+				
+				listadoSocios.add(miSocio);
+				
+			}
+		} catch (SQLException e) {
+	        throw e;
+	    } catch (Exception ex) {
+	        throw ex;
+	    } finally {
+	        if (rs != null)
+	            rs.close();
+	        if (st != null)
+	            st.close();
+	        if (con != null)
+	            con.close();
+	    }
+	    return listadoSocios;
+	}
+	}
 	
-}
+
+		
+		
+		
+
+	
+	
+

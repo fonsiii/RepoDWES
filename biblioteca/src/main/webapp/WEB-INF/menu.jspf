@@ -9,14 +9,14 @@
             href="${pageContext.request.contextPath}/controllerSocio?operacion=listarSocios">Listado
                Socios</a></li>
             <li><a
-               href="${pageContext.request.contextPath}/admin/getsocio.jsp">Modificar
+               href="${pageContext.request.contextPath}/socio/getsocio.jsp">Modificar
                   Socio</a></li>
             <li><a href="#">Eliminar Socio</a></li>
             <li><a
                href="${pageContext.request.contextPath}/controllerSocio?operacion=editardatospersonales">Modificar
                   Datos Personales</a></li>
             <li><a
-               href="${pageContext.request.contextPath}/controlleradmin?operacion=socioslibrosfueraplazo">Socios
+               href="${pageContext.request.contextPath}/controllerSocio?operacion=socioslibrosfueraplazo">Socios
                   Morosos</a></li>
       </ul></li>
    <li><a href="#" class="MenuBarItemSubmenu">Autores</a>
