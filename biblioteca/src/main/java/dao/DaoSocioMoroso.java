@@ -1,33 +1,26 @@
 package dao;
 
-import java.sql.Connection; // Importa la clase Connection para manejar conexiones a la base de datos.
-import java.sql.PreparedStatement; // Importa PreparedStatement para ejecutar consultas parametrizadas.
-import java.sql.ResultSet; // Importa ResultSet para almacenar los resultados de una consulta SQL.
-import java.sql.SQLException; // Importa SQLException para manejar errores de SQL.
-import java.util.ArrayList; // Importa ArrayList para utilizar listas dinámicas.
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-import conexion.Conexion; // Importa la clase Conexion para obtener conexiones a la base de datos.
-import entidades.SocioMoroso; // Importa la clase SocioMoroso que representa la entidad SocioMoroso.
+import conexion.Conexion;
+import entidades.SocioMoroso;
 
 public class DaoSocioMoroso {
 
-    /**
-     * Método que devuelve una lista de todos los socios morosos.
-     * @return ArrayList<SocioMoroso> - lista de socios morosos en la base de datos.
-     * @throws SQLException - en caso de error en el acceso o ejecución de la consulta.
-     * @throws Exception - cualquier otro error que pueda ocurrir.
-     */
     public ArrayList<SocioMoroso> listadoSociosMorosos() throws SQLException, Exception {
-        ArrayList<SocioMoroso> listadoSociosMorosos = new ArrayList<>(); // Inicializa el ArrayList para almacenar los socios morosos.
-        Conexion conexion = new Conexion(); // Crea un objeto de conexión a la base de datos.
-        Connection con = null; // Variable para almacenar la conexión.
-        ResultSet rs = null; // Variable para almacenar el resultado de la consulta.
-        PreparedStatement st = null; // Variable para preparar la consulta SQL.
+        ArrayList<SocioMoroso> listadoSociosMorosos = new ArrayList<>();
+        Conexion conexion = new Conexion();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement st = null;
 
         try {
-            con = conexion.getConexion(); // Obtiene la conexión a la base de datos.
+            con = conexion.getConexion();
 
-            // SQL para seleccionar los socios que tienen préstamos en mora.
             String ordenSQL = "SELECT \n"
                     + "    s.IDSOCIO, \n"
                     + "    s.NOMBRE\n"
@@ -46,66 +39,56 @@ public class DaoSocioMoroso {
                     + "    s.IDSOCIO, \n"
                     + "    s.NOMBRE";
 
-            st = con.prepareStatement(ordenSQL); // Prepara la consulta.
-            rs = st.executeQuery(); // Ejecuta la consulta y almacena los resultados.
+            st = con.prepareStatement(ordenSQL);
+            rs = st.executeQuery();
 
-            // Itera a través de los resultados del ResultSet.
             while (rs.next()) {
-                // Crea un nuevo objeto SocioMoroso por cada fila obtenida.
                 SocioMoroso socioMoroso = new SocioMoroso();
-                socioMoroso.setId(rs.getInt("IDSOCIO")); // Establece el ID del socio.
-                socioMoroso.setNombre(rs.getString("NOMBRE")); // Establece el nombre del socio.
-                listadoSociosMorosos.add(socioMoroso); // Añade el socio moroso al ArrayList.
+                socioMoroso.setId(rs.getInt("IDSOCIO"));
+                socioMoroso.setNombre(rs.getString("NOMBRE"));
+                listadoSociosMorosos.add(socioMoroso);
             }
         } catch (SQLException e) {
-            throw e; // Relanza la excepción si ocurre un error SQL.
+            throw e;
         } catch (Exception ex) {
-            throw ex; // Relanza cualquier otro tipo de excepción.
+            throw ex;
         } finally {
-            // Liberación de recursos en el bloque finally para asegurar que se cierran.
-            if (rs != null) rs.close(); // Cierra el ResultSet si está abierto.
-            if (st != null) st.close(); // Cierra el PreparedStatement si está abierto.
-            if (con != null) con.close(); // Cierra la conexión si está abierta.
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+            if (con != null) con.close();
         }
-        return listadoSociosMorosos; // Devuelve la lista de socios morosos.
+        return listadoSociosMorosos;
     }
 
-    /**
-     * Método que busca un socio por su ID.
-     * @param idSocio - ID del socio a buscar.
-     * @return SocioMoroso - objeto SocioMoroso encontrado o null si no existe.
-     * @throws SQLException - en caso de error en el acceso o ejecución de la consulta.
-     * @throws Exception - cualquier otro error que pueda ocurrir.
-     */
     public SocioMoroso buscarSocioPorId(int idSocio) throws SQLException, Exception {
-        SocioMoroso socioMoroso = null; // Inicializa el objeto SocioMoroso a null.
-        Conexion conexion = new Conexion(); // Crea un objeto de conexión a la base de datos.
-        Connection con = null; // Variable para almacenar la conexión.
-        PreparedStatement st = null; // Variable para preparar la consulta SQL.
-        ResultSet rs = null; // Variable para almacenar el resultado de la consulta.
+        SocioMoroso socioMoroso = null;
+        Conexion conexion = new Conexion();
+        Connection con = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
 
         try {
-            con = conexion.getConexion(); // Obtiene la conexión a la base de datos.
-            String sql = "SELECT * FROM SOCIO WHERE IDSOCIO = ?"; // Consulta SQL para buscar el socio por ID.
+            con = conexion.getConexion();
+            String sql = "SELECT * FROM SOCIO WHERE IDSOCIO = ?";
 
-            st = con.prepareStatement(sql); // Prepara la consulta.
-            st.setInt(1, idSocio); // Establece el ID del socio en la consulta.
-            rs = st.executeQuery(); // Ejecuta la consulta y almacena los resultados.
+            st = con.prepareStatement(sql);
+            st.setInt(1, idSocio);
+            rs = st.executeQuery();
 
-            if (rs.next()) { // Si hay un resultado, crea el objeto SocioMoroso.
-                socioMoroso = new SocioMoroso(); // Inicializa el objeto SocioMoroso.
-                socioMoroso.setId(rs.getInt("IDSOCIO")); // Establece el ID del socio.
-                socioMoroso.setNombre(rs.getString("NOMBRE")); // Establece el nombre del socio.
+            if (rs.next()) {
+                socioMoroso = new SocioMoroso();
+                socioMoroso.setId(rs.getInt("IDSOCIO"));
+                socioMoroso.setNombre(rs.getString("NOMBRE"));
             }
         } catch (SQLException e) {
-            throw e; // Relanza la excepción si ocurre un error SQL.
+            throw e;
         } catch (Exception ex) {
-            throw ex; // Relanza cualquier otro tipo de excepción.
+            throw ex;
         } finally {
-            if (rs != null) rs.close(); // Cierra el ResultSet si está abierto.
-            if (st != null) st.close(); // Cierra el PreparedStatement si está abierto.
-            if (con != null) con.close(); // Cierra la conexión si está abierta.
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+            if (con != null) con.close();
         }
-        return socioMoroso; // Devuelve el socio encontrado o null si no existe.
+        return socioMoroso;
     }
 }

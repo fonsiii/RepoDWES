@@ -1,89 +1,88 @@
-<%@ taglib uri="jakarta.tags.core" prefix="c" %> <!-- Importa la biblioteca de etiquetas JSTL Core para usar en la página -->
+<%@ taglib uri="jakarta.tags.core" prefix="c" %> 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" %> <!-- Define el lenguaje y la codificación de la página JSP -->
+    pageEncoding="UTF-8" %> 
 
-<!DOCTYPE html> <!-- Declara el tipo de documento como HTML5 -->
+<!DOCTYPE html> 
 <html>
 <head>
-    <meta charset="UTF-8"> <!-- Establece la codificación de caracteres de la página -->
-    <title>Buscar Socio</title> <!-- Título que aparecerá en la pestaña del navegador -->
-    <jsp:directive.include file="../includes/includefile.jspf" /> <!-- Incluye un archivo JSP común que puede contener configuraciones o elementos comunes -->
+    <meta charset="UTF-8"> 
+    <title>Buscar Socio</title> 
+    <jsp:directive.include file="../includes/includefile.jspf" /> 
 </head>
 <body>
-    <div class="container"> <!-- Contenedor principal para la página -->
-        <div class="header"></div> <!-- Sección del encabezado, que puede contener un título o logo -->
-        <div class="menu"> <!-- Contenedor para el menú de navegación -->
-            <jsp:directive.include file="../WEB-INF/menu.jspf" /> <!-- Incluye el menú de navegación de la aplicación -->
+    <div class="container"> 
+        <div class="header"></div> 
+        <div class="menu"> 
+            <jsp:directive.include file="../WEB-INF/menu.jspf" /> 
         </div>
 
-        <!-- Comprobación de errores -->
-        <c:if test="${error != null}"> <!-- Verifica si existe un mensaje de error en el contexto -->
-            <div class="diverror"> <!-- Contenedor para mostrar el error -->
+        <c:if test="${error != null}"> 
+            <div class="diverror"> 
                 <p>
-                    <strong>Error:</strong><br> <!-- Texto en negrita que indica que hay un error -->
-                    <c:out value="${error}" /> <!-- Muestra el mensaje de error almacenado en el contexto -->
+                    <strong>Error:</strong><br> 
+                    <c:out value="${error}" /> 
                 </p>
             </div>
         </c:if>
 
-        <!-- Comprobación de confirmaciones -->
-        <c:if test="${confirmaroperacion != null}"> <!-- Verifica si existe un mensaje de confirmación -->
-            <div class="divconfirmacion"> <!-- Contenedor para mostrar el mensaje de confirmación -->
+        <c:if test="${confirmaroperacion != null}"> 
+            <div class="divconfirmacion"> 
                 <p>
-                    <strong>Mensaje:</strong><br> <!-- Texto en negrita que indica un mensaje -->
-                    <c:out value="${confirmaroperacion}" /> <!-- Muestra el mensaje de confirmación almacenado en el contexto -->
+                    <strong>Mensaje:</strong><br> 
+                    <c:out value="${confirmaroperacion}" /> 
                     <script>
-                        // Cambia el estado en el historial del navegador para evitar el reenvío del formulario al actualizar la página
                         window.history.replaceState(null, null, "socio/getsocio.jsp")
                     </script>
                 </p>
             </div>
         </c:if>
 
-        <!-- Formulario de búsqueda de socio -->
-        <div id="formBusquedaSocio" class="formulariogeneral"> <!-- Contenedor para el formulario de búsqueda -->
-            <form name="frmBusquedaSocio" method="get" action="${pageContext.request.contextPath}/controllerSocio"> <!-- Formulario que envía datos mediante el método GET -->
-                <fieldset id="busquedaSocio"> <!-- Agrupación de campos de búsqueda -->
+        <div id="formBusquedaSocio" class="formulariogeneral"> 
+            <form name="frmBusquedaSocio" method="post" action="${pageContext.request.contextPath}/controllerSocio?operacion=getSocio"> 
+                <fieldset id="busquedaSocio"> 
                     <legend>
-                        <img src="${pageContext.request.contextPath}/resources/img/azarquiel.gif">&nbsp;Buscar Socio <!-- Imagen y título del formulario -->
+                        <img src="${pageContext.request.contextPath}/resources/img/azarquiel.gif">&nbsp;Buscar Socio 
                     </legend>
-                    <div class="etiquetas"> <!-- Contenedor para las etiquetas de los campos -->
-                        <label for="nombre">Nombre del Socio:</label> <!-- Etiqueta para el campo de nombre -->
+                    <div class="etiquetas"> 
+                        <label for="nombre">Nombre del Socio:</label> 
                     </div>
-                    <div class="campos"> <!-- Contenedor para los campos de entrada -->
-                        <input type="text" id="nombre" name="nombre" value="${nombreBuscado}" /> <!-- Campo de entrada para el nombre del socio, con valor predeterminado -->
+                    <div class="campos"> 
+                        <input type="text" id="nombre" name="nombre" value="${nombreBuscado}" /> 
                     </div>
-                    <div class="cb"></div> <!-- Espacio entre campos -->
-                    <div class="botones"> <!-- Contenedor para los botones del formulario -->
-                        <input type="submit" name="Buscar" value="Buscar"> <!-- Botón para enviar el formulario de búsqueda -->
+                    <div class="cb"></div> 
+                    <div class="botones"> 
+                        <input type="hidden" name="formSubmitted" value="true" /> <!-- Campo oculto -->
+                        <input type="submit" name="Buscar" value="Buscar"> 
                     </div>
                 </fieldset>
             </form>
         </div>
 
-        <!-- Mostrar resultados de la búsqueda -->
-        <c:if test="${not empty socios}"> <!-- Verifica si la lista de socios no está vacía -->
-            <h2>Resultados de la búsqueda:</h2> <!-- Título para la sección de resultados -->
-            <table class="table tablaconborde tablacebra tabla-hover"> <!-- Tabla para mostrar los resultados -->
-                <thead>
+        <c:if test="${empty socioBuscado && param.formSubmitted != null}">
+            <div class="diverror">
+                No hay nadie con el nombre: <c:out value="${nombreBuscado}"/> 
+            </div>
+        </c:if>
+
+        <c:if test="${not empty socioBuscado}"> 
+            <div class="w-75 ma">
+                <table class="table tablaconborde tablacebra tabla-hover">
                     <tr>
-                        <th>Nombre</th> <!-- Cabecera para el nombre del socio -->
-                        <th>Dirección</th> <!-- Cabecera para la dirección del socio -->
-                        <th>Email</th> <!-- Cabecera para el email del socio -->
-                        <th>Versión</th> <!-- Cabecera para la versión del socio -->
+                        <th>ID de socio</th>
+                        <th>Nombre</th>
+                        <th>Direccion</th>
+                        <th>Editar</th>
                     </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="socio" items="${socios}"> <!-- Itera sobre la lista de socios -->
+                    <c:forEach items="${socioBuscado}" var="socio">
                         <tr>
-                            <td class="txtcentrado"><c:out value="${socio.nombre}" /></td> <!-- Muestra el nombre del socio -->
-                            <td class="txtcentrado"><c:out value="${socio.direccion}" /></td> <!-- Muestra la dirección del socio -->
-                            <td class="txtcentrado"><c:out value="${socio.email}" /></td> <!-- Muestra el email del socio -->
-                            <td class="txtcentrado"><c:out value="${socio.version}" /></td> <!-- Muestra la versión del socio -->
+                            <td class="txtcentrado">${socio.getIdSocio()}</td>
+                            <td class="txtcentrado">${socio.getNombre()}</td>
+                            <td class="txtcentrado">${socio.getDireccion()}</td>
+                            <td class="txtcentrado">Editar</td>
                         </tr>
                     </c:forEach>
-                </tbody>
-            </table>
+                </table>
+            </div>          
         </c:if>
     </div>
 </body>
