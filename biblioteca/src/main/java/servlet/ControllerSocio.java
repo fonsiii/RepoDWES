@@ -26,6 +26,8 @@ public class ControllerSocio extends HttpServlet {
     private static final String SOCIOS_MOROSOS_PAGE = "socio/sociosmorosos.jsp"; 
     private static final String ALTA_SOCIO_PAGE = "socio/altasocio.jsp"; 
     private static final String GET_SOCIO_PAGE = "socio/getsocio.jsp"; 
+    private static final String MODIFICAR_SOCIO_PAGE = "socio/modificarsocio.jsp"; 
+
 
     
     private final DaoSocio daoSocio = new DaoSocio(); 
@@ -58,7 +60,10 @@ public class ControllerSocio extends HttpServlet {
             case "librosSocioMoroso": 
                 mostrarLibrosSocioMoroso(request, response);
                 break;
-
+                
+            case "modificarSocio":
+            	mostrarDatosSocio(request, response);
+            	break;
 
             default: 
                 procesarError(request, response, new Exception("Operación no reconocida"), ERROR_PAGE);
@@ -84,6 +89,10 @@ public class ControllerSocio extends HttpServlet {
             case "getSocio":
             	listarSociosBuscados(request, response);
             	break;
+                case "modificarSocio":
+                    actualizarSocio(request, response);
+                    break;
+            	
         }
     }
 
@@ -179,7 +188,56 @@ public class ControllerSocio extends HttpServlet {
             procesarError(request, response, e, SOCIOS_MOROSOS_PAGE);
         }
     }
+    
+    private void mostrarDatosSocio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int idSocio;
+        try {
+            idSocio = Integer.parseInt(request.getParameter("idSocio"));
+        } catch (NumberFormatException nfe) {
+            procesarError(request, response, new Exception("ID de socio no válido"), ERROR_PAGE);
+            return;
+        }
 
+        try {
+            Socio socio = daoSocio.buscarSocioPorId(idSocio);
+            request.setAttribute("socio", socio);
+            request.getRequestDispatcher(MODIFICAR_SOCIO_PAGE).forward(request, response);
+        } catch (SQLException sqle) {
+            procesarError(request, response, sqle, MODIFICAR_SOCIO_PAGE);
+        } catch (Exception e) {
+            procesarError(request, response, e, MODIFICAR_SOCIO_PAGE);
+        }
+    }
+
+    private void actualizarSocio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int idSocio = Integer.parseInt(request.getParameter("idSocio"));
+        String nombre = request.getParameter("nombre");
+        String direccion = request.getParameter("direccion");
+        int version = Integer.parseInt(request.getParameter("version"));
+
+        if (nombre == null || nombre.isBlank() || direccion == null || direccion.isBlank()) {
+            request.setAttribute("error", "Nombre y dirección son obligatorios.");
+            mostrarDatosSocio(request, response); 
+            return;
+        }
+
+        try {
+            Socio socio = new Socio();
+            socio.setIdSocio(idSocio);
+            socio.setNombre(nombre);
+            socio.setDireccion(direccion);
+            socio.setVersion(version);
+
+            daoSocio.actualizarSocio(socio);
+            request.setAttribute("confirmaroperacion", "El socio ha sido actualizado correctamente.");
+        } catch (SQLException sqle) {
+            procesarError(request, response, sqle, MODIFICAR_SOCIO_PAGE);
+        } catch (Exception e) {
+            procesarError(request, response, e, MODIFICAR_SOCIO_PAGE);
+        }
+
+        mostrarDatosSocio(request, response); 
+    }
 
     protected void procesarError(HttpServletRequest request, HttpServletResponse response, Exception e, String url) throws ServletException, IOException {
         String mensajeError = (e instanceof SQLException) ? ((SQLException) e).getErrorCode() + ": " + e.getMessage() : e.getMessage();

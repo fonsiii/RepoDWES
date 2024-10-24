@@ -15,7 +15,7 @@ public class Conexion {
     public Connection getConexion() throws SQLException, Exception {
         // URL de conexión a la base de datos. 
         // Incluye el tipo de driver, el nombre de usuario, la contraseña y la dirección del servidor.
-        String url = "jdbc:oracle:thin:VS2DAWBIBLIOTECA4/VS2DAWBIBLIOTECA4@80.28.158.14:1521:oradai";
+        String url = "jdbc:oracle:thin:VS2DAWBIBLIOTECA4/DAWBIBLIOTECA4@80.28.158.14:1521:oradai";
         
         // Declaración de variables para la conexión y el datasource.
         Connection con; // Variable para almacenar la conexión.

@@ -112,4 +112,73 @@ public class DaoSocio {
         }
         return listadoSociosBuscados; 
     }
+    public Socio buscarSocioPorId(int idSocio) throws SQLException, Exception{
+    	Socio socio = null;
+    	Conexion conexion = new Conexion();
+    	Connection con = null;
+    	PreparedStatement st = null;
+    	ResultSet rs = null;
+    	
+    	try {
+    		
+    		con = conexion.getConexion();
+    		String sql = "SELECT * FROM SOCIO WHERE IDSOCIO = ?";
+    		st = con.prepareStatement(sql);
+    		st.setInt(1, idSocio);
+    		rs = st.executeQuery();
+    		
+    		if(rs.next()) {
+    			socio = new Socio();
+                socio.setIdSocio(rs.getInt("IDSOCIO"));
+    			socio.setNombre(rs.getString("NOMBRE"));
+    			socio.setDireccion(rs.getString("DIRECCION"));
+    			socio.setVersion(rs.getInt("VERSION")+1);
+    		}
+    		
+    		
+    	}catch (SQLException e) {
+            throw e;
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+            if (con != null) con.close();
+        }
+        return socio;
+    	
+    }
+    public void actualizarSocio(Socio socio) throws SQLException, Exception {
+        Conexion conexion = new Conexion();
+        Connection con = null;
+        PreparedStatement st = null;
+
+        try {
+            con = conexion.getConexion();
+            String sql = "UPDATE SOCIO SET NOMBRE = ?, DIRECCION = ?, VERSION = VERSION + 1 "
+                    + "WHERE IDSOCIO = ? AND VERSION = ?";
+            st = con.prepareStatement(sql);
+            
+            st.setString(1, socio.getNombre());
+            st.setString(2, socio.getDireccion());
+
+            st.setInt(3, socio.getIdSocio()); 
+            st.setInt(4, socio.getVersion() - 1);
+
+            int filas = st.executeUpdate();
+            
+            if (filas == 0) {
+                throw new Exception("No se pudo actualizar el socio porque la versión no coincide.");
+            }
+            
+        } catch (SQLException e) {
+            throw e;
+        } catch(Exception ex) {
+            throw ex;
+        } finally {
+            if (st != null) st.close();
+            if (con != null) con.close();
+        }
+    }
+
 }

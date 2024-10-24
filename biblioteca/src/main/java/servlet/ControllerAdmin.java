@@ -21,7 +21,6 @@ import entidades.Autor;
 public class ControllerAdmin extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    // Constantes para las rutas de JSP
     private static final String ERROR_PAGE = "admin/error.jsp"; 
     private static final String LISTADO_AUTORES_PAGE = "admin/listadoautores.jsp"; 
     private static final String ALTA_AUTOR_PAGE = "admin/altaautor.jsp"; 
