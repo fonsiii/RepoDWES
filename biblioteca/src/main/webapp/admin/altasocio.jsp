@@ -1,14 +1,13 @@
-<%@ taglib uri="jakarta.tags.core" prefix="c"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Modificar Socio</title>
+    <title>Nuevo Socio</title>
     <jsp:directive.include file="../includes/includefile.jspf" />
 </head>
-
 <body>
     <div class="container">
         <div class="header"></div>
@@ -16,60 +15,54 @@
             <jsp:directive.include file="../WEB-INF/menu.jspf" />
         </div>
 
-        <c:if test="${not empty error}">
+        <c:if test="${error != null}">
             <div class="diverror">
                 <p>
-                    <strong><c:out value="Error" /></strong> <br />
+                    <strong><c:out value="Error" /></strong> <br>
                     <c:out value="${error}" />
                 </p>
             </div>
         </c:if>
 
-        <c:if test="${not empty confirmaroperacion}">
+        <c:if test="${confirmaroperacion != null}">
             <div class="divconfirmacion">
                 <p>
-                    <strong><c:out value="Mensaje" /></strong> <br />
+                    <strong><c:out value="Mensaje" /></strong> <br>
                     <c:out value="${confirmaroperacion}" />
                     <script>
-                        window.history.replaceState(null, null, "socio/modificarsocio.jsp");
+                        window.history.replaceState(null, null, "admin/altasocio.jsp")
                     </script>
                 </p>
             </div>
         </c:if>
 
         <div id="formSocio" class="formulariogeneral">
-            <form name="frmSocio" method="post" action="${pageContext.request.contextPath}/controllerSocio">
+            <form name="frmSocio" method="post" action="${pageContext.request.contextPath}/controlleradmin?operacion=altaSocio">
                 <fieldset id="datosSocio">
                     <legend>
-                        <img src="${pageContext.request.contextPath}/resources/img/azarquiel.gif" />
-                        &nbsp;Modificar Socio
+                        <img src="${pageContext.request.contextPath}/resources/img/azarquiel.gif">&nbsp;Nuevo Socio
                     </legend>
-
-                    <!-- Campo oculto para la operación -->
-                    <input type="hidden" name="operacion" value="modificarSocio" />
-                    <input type="hidden" name="idSocio" value="${socio.getIdSocio()}" />
-
                     <div class="etiquetas">
-                        <label for="socio">Nombre:</label>
+                        <label for="nombre">Nombre:</label>
                     </div>
                     <div class="campos">
-                        <input type="text" id="nombre" name="nombre" value="${socio.getNombre()}" required />
+                        <input type="text" id="nombre" name="nombre" value="${nuevosocio.nombre}" />
                     </div>
                     <div class="cb"></div>
 
                     <div class="etiquetas">
-                        <label for="direccion">Direccion:</label>
+                        <label for="direccion">Dirección:</label>
                     </div>
                     <div class="campos">
-                        <input type="text" id="direccion" name="direccion" value="${socio.getDireccion()}" required /> 
+                        <input type="text" id="direccion" name="direccion" value="${nuevosocio.direccion}" />
                     </div>
                     <div class="cb"></div>
 
                     <div class="etiquetas">
-                        <label for="version">Version:</label>
+                        <label for="email">Email:</label>
                     </div>
                     <div class="campos">
-                        <input type="text" id="version" name="version" value="${socio.getVersion()}" required /> 
+                        <input type="text" id="email" name="email" value="${nuevosocio.email}" />
                     </div>
                     <div class="cb"></div>
 
@@ -81,7 +74,7 @@
         </div>
 
         <div id="separacion">
-            <br />
+            <br>
         </div>
     </div>
 </body>

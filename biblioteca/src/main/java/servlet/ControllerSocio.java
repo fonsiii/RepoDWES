@@ -1,247 +1,121 @@
 package servlet;
 
+import java.io.IOException;
+import java.util.List;
+
+import entidades.Autor;
+import entidades.Libro;
+import dao.DaoAutor;
+import dao.DaoLibro;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
-import dao.DaoLibroMoroso;
-import dao.DaoSocio;
-import dao.DaoSocioMoroso;
-import entidades.LibroMoroso;
-import entidades.Socio;
-import entidades.SocioMoroso;
-
-@WebServlet("/controllerSocio") 
+@WebServlet("/controllerSocio")
 public class ControllerSocio extends HttpServlet {
-    private static final long serialVersionUID = 1L;
 
-    private static final String ERROR_PAGE = "admin/error.jsp"; 
-    private static final String LISTADO_SOCIOS_PAGE = "socio/listadosocios.jsp"; 
-    private static final String SOCIOS_MOROSOS_PAGE = "socio/sociosmorosos.jsp"; 
-    private static final String ALTA_SOCIO_PAGE = "socio/altasocio.jsp"; 
-    private static final String GET_SOCIO_PAGE = "socio/getsocio.jsp"; 
-    private static final String MODIFICAR_SOCIO_PAGE = "socio/modificarsocio.jsp"; 
-
-
-    
-    private final DaoSocio daoSocio = new DaoSocio(); 
-    private final DaoSocioMoroso daoMoroso = new DaoSocioMoroso();
-    private final DaoLibroMoroso daoLibroMoroso = new DaoLibroMoroso();
-    
-    
-    public ControllerSocio() {
-        super();
-    }
+    private static final String LISTAR_AUTORES_PAGE = "socio/listadoautores.jsp";
+    private static final String GET_LIBROS_PAGE = "socio/getlibros.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String operacion = request.getParameter("operacion");
 
-        if (operacion == null || operacion.isBlank()) {
-            procesarError(request, response, new Exception("Operación no válida"), ERROR_PAGE);
-            return;
-        }
-
-        switch (operacion) {
-            case "listarSocios":
-                listarSocios(request, response);
-                break;
-
-            case "socioslibrosfueraplazo": 
-                listarSociosMorosos(request, response);
-                break;
-
-            case "librosSocioMoroso": 
-                mostrarLibrosSocioMoroso(request, response);
-                break;
-                
-            case "modificarSocio":
-            	mostrarDatosSocio(request, response);
-            	break;
-
-            default: 
-                procesarError(request, response, new Exception("Operación no reconocida"), ERROR_PAGE);
-                break;
+        if ("listarAutores".equals(operacion)) {
+            listarAutores(request, response);
+        } else {
+            procesarError(request, response, new Exception("Operación no válida"), LISTAR_AUTORES_PAGE);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-
         String operacion = request.getParameter("operacion");
 
-        if (operacion == null || operacion.isBlank()) {
-            procesarError(request, response, new Exception("Operación no válida"), ERROR_PAGE);
-            return;
+        if ("buscarLibros".equals(operacion)) {
+            buscarLibros(request, response);
+        }
+    }
+
+    private void buscarLibros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String searchInput = request.getParameter("searchInput");
+        String searchType = request.getParameter("searchType");
+
+        // Verificar si se ha proporcionado un término de búsqueda
+        if (searchInput == null || searchInput.trim().isEmpty()) {
+            // Si no se ha ingresado un término, mostrar error
+            request.setAttribute("error", "Debe ingresar un término de búsqueda.");
+            request.getRequestDispatcher(GET_LIBROS_PAGE).forward(request, response);
+            return; // Terminar la ejecución aquí si no hay término de búsqueda
         }
 
-        switch (operacion) {
-            case "altaSocio": 
-            	altaSocio(request, response, "nombre", "direccion", "email");
+        // Inicializar los parámetros de búsqueda para autor, título o ISBN
+        String autor = null;
+        String titulo = null;
+        String isbn = null;
+
+        // Asignar el término de búsqueda al parámetro correspondiente según el tipo seleccionado
+        switch (searchType) {
+            case "autor":
+                autor = searchInput;
                 break;
-            case "getSocio":
-            	listarSociosBuscados(request, response);
-            	break;
-                case "modificarSocio":
-                    actualizarSocio(request, response);
-                    break;
-            	
+            case "titulo":
+                titulo = searchInput;
+                break;
+            case "isbn":
+                isbn = searchInput;
+                break;
+            default:
+                request.setAttribute("error", "Tipo de búsqueda no válido.");
+                request.getRequestDispatcher(GET_LIBROS_PAGE).forward(request, response);
+                return;
         }
-    }
 
-    private void listarSocios(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Realizar la búsqueda con los parámetros correspondientes
+        DaoLibro daoLibro = new DaoLibro();
+        List<Libro> resultados = null;
+
         try {
-            ArrayList<Socio> listado = daoSocio.listadoSocios();
-            request.setAttribute("socios", listado);
-            request.getRequestDispatcher(LISTADO_SOCIOS_PAGE).forward(request, response);
+            // Llamar al método buscarLibros con los tres parámetros
+            resultados = daoLibro.buscarLibros(autor, titulo, isbn);
+
+            if (resultados != null && !resultados.isEmpty()) {
+                // Si hay resultados, enviarlos a la vista
+                request.setAttribute("resultados", resultados);
+            } else {
+                // Si no hay resultados, mostrar mensaje de error
+            	// En el caso de no encontrar resultados
+            	request.setAttribute("searchInput", searchInput);  // Pasar el valor ingresado al JSP
+            	request.setAttribute("error", "No se encontraron libros que coincidan con su búsqueda.");
+            	request.getRequestDispatcher(GET_LIBROS_PAGE).forward(request, response);            }
+
         } catch (Exception e) {
-            procesarError(request, response, e, LISTADO_SOCIOS_PAGE);
+            // Si ocurre un error en la búsqueda, mostrar el mensaje de error
+            request.setAttribute("error", "Error en la búsqueda: " + e.getMessage());
         }
+
+        // Redirigir a la página de búsqueda de libros con los resultados o errores
+        request.getRequestDispatcher(GET_LIBROS_PAGE).forward(request, response);
     }
-    private void listarSociosBuscados(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String nombre = request.getParameter("nombre");
-        request.setAttribute("nombreBuscado", nombre);
-        if (nombre == null || nombre.isBlank()) {
-            request.setAttribute("error", "Nombre obligatorio.");
-            request.getRequestDispatcher(GET_SOCIO_PAGE).forward(request, response);
-            return;
-        }
+
+
+
+    private void listarAutores(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        DaoAutor daoAutor = new DaoAutor();
         try {
-            ArrayList<Socio> socioBuscado = daoSocio.buscarSocioPorNombre(nombre);
-            request.setAttribute("socioBuscado", socioBuscado);
-            request.getRequestDispatcher(GET_SOCIO_PAGE).forward(request, response);
+            List<Autor> autores = daoAutor.listadoAutores();
+            request.setAttribute("autores", autores);
+            request.getRequestDispatcher(LISTAR_AUTORES_PAGE).forward(request, response);
         } catch (Exception e) {
-            procesarError(request, response, e, GET_SOCIO_PAGE);
+            procesarError(request, response, e, LISTAR_AUTORES_PAGE);
         }
     }
 
-    
-    private void altaSocio (HttpServletRequest request, HttpServletResponse response, String nombre, String direccion , String email )throws ServletException, IOException{
-    	
-        String nombreSocio = request.getParameter("nombre");
-        String direccionSocio = request.getParameter("direccion");
-        String emailSocio = request.getParameter("email");
-
-        if (nombreSocio == null || nombreSocio.isBlank() || direccionSocio == null || direccionSocio.isBlank() || emailSocio == null || emailSocio.isBlank()) {
-            request.setAttribute("error", "Nombre, dirección y email son obligatorios.");
-            request.getRequestDispatcher(ALTA_SOCIO_PAGE).forward(request, response);
-            return;
-        }
-
-        try {
-            Socio nuevoSocio = new Socio();
-            nuevoSocio.setNombre(nombreSocio);
-            nuevoSocio.setDireccion(direccionSocio);
-            nuevoSocio.setEmail(emailSocio);
-            nuevoSocio.setVersion(1);
-
-            daoSocio.insertaSocio(nuevoSocio);
-            request.setAttribute("confirmaroperacion", "El socio ha sido creado correctamente");
-        } catch (SQLException sqle) {
-            procesarError(request, response, sqle, ALTA_SOCIO_PAGE);
-        } catch (Exception e) {
-            procesarError(request, response, e, ALTA_SOCIO_PAGE);
-        }
-
-        request.getRequestDispatcher(ALTA_SOCIO_PAGE).forward(request, response);
-    }
-
-    private void listarSociosMorosos(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            ArrayList<SocioMoroso> listadoMorosos = daoMoroso.listadoSociosMorosos();
-            request.setAttribute("sociosMorosos", listadoMorosos);
-            request.getRequestDispatcher(SOCIOS_MOROSOS_PAGE).forward(request, response);
-        } catch (Exception e) {
-            procesarError(request, response, e, SOCIOS_MOROSOS_PAGE);
-        }
-    }
-
-    private void mostrarLibrosSocioMoroso(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int idSocio;
-        try {
-            idSocio = Integer.parseInt(request.getParameter("idSocio"));
-        } catch (NumberFormatException nfe) {
-            procesarError(request, response, new Exception("ID de socio no válido"), ERROR_PAGE);
-            return;
-        }
-
-        try {
-            ArrayList<LibroMoroso> librosMorosos = daoLibroMoroso.listadoLibrosMorosos(idSocio);
-            SocioMoroso socioMoroso = daoMoroso.buscarSocioPorId(idSocio);
-            ArrayList<SocioMoroso> listadoMorosos = daoMoroso.listadoSociosMorosos();
-
-            request.setAttribute("socioNombre", socioMoroso.getNombre()); 
-            request.setAttribute("librosMorosos", librosMorosos); 
-            request.setAttribute("sociosMorosos", listadoMorosos);
-
-            request.getRequestDispatcher(SOCIOS_MOROSOS_PAGE).forward(request, response);
-        } catch (SQLException sqle) {
-            procesarError(request, response, sqle, SOCIOS_MOROSOS_PAGE);
-        } catch (Exception e) {
-            procesarError(request, response, e, SOCIOS_MOROSOS_PAGE);
-        }
-    }
-    
-    private void mostrarDatosSocio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int idSocio;
-        try {
-            idSocio = Integer.parseInt(request.getParameter("idSocio"));
-        } catch (NumberFormatException nfe) {
-            procesarError(request, response, new Exception("ID de socio no válido"), ERROR_PAGE);
-            return;
-        }
-
-        try {
-            Socio socio = daoSocio.buscarSocioPorId(idSocio);
-            request.setAttribute("socio", socio);
-            request.getRequestDispatcher(MODIFICAR_SOCIO_PAGE).forward(request, response);
-        } catch (SQLException sqle) {
-            procesarError(request, response, sqle, MODIFICAR_SOCIO_PAGE);
-        } catch (Exception e) {
-            procesarError(request, response, e, MODIFICAR_SOCIO_PAGE);
-        }
-    }
-
-    private void actualizarSocio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int idSocio = Integer.parseInt(request.getParameter("idSocio"));
-        String nombre = request.getParameter("nombre");
-        String direccion = request.getParameter("direccion");
-        int version = Integer.parseInt(request.getParameter("version"));
-
-        if (nombre == null || nombre.isBlank() || direccion == null || direccion.isBlank()) {
-            request.setAttribute("error", "Nombre y dirección son obligatorios.");
-            mostrarDatosSocio(request, response); 
-            return;
-        }
-
-        try {
-            Socio socio = new Socio();
-            socio.setIdSocio(idSocio);
-            socio.setNombre(nombre);
-            socio.setDireccion(direccion);
-            socio.setVersion(version);
-
-            daoSocio.actualizarSocio(socio);
-            request.setAttribute("confirmaroperacion", "El socio ha sido actualizado correctamente.");
-        } catch (SQLException sqle) {
-            procesarError(request, response, sqle, MODIFICAR_SOCIO_PAGE);
-        } catch (Exception e) {
-            procesarError(request, response, e, MODIFICAR_SOCIO_PAGE);
-        }
-
-        mostrarDatosSocio(request, response); 
-    }
-
-    protected void procesarError(HttpServletRequest request, HttpServletResponse response, Exception e, String url) throws ServletException, IOException {
-        String mensajeError = (e instanceof SQLException) ? ((SQLException) e).getErrorCode() + ": " + e.getMessage() : e.getMessage();
-        request.setAttribute("error", mensajeError); 
-        request.getRequestDispatcher(url == null ? ERROR_PAGE : url).forward(request, response);
+    private void procesarError(HttpServletRequest request, HttpServletResponse response, Exception e, String errorPage) throws ServletException, IOException {
+        request.setAttribute("error", e.getMessage());
+        request.getRequestDispatcher(errorPage).forward(request, response);
     }
 }

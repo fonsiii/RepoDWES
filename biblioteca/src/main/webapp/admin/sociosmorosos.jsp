@@ -1,10 +1,3 @@
-<%@ page import="dao.DaoSocioMoroso" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="entidades.SocioMoroso" %>
-<%@ page import="dao.DaoSocio" %>
-<%@ page import="dao.DaoLibroMoroso" %>
-<%@ page import="entidades.LibroMoroso" %>
-<%@ page import="java.sql.SQLException" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
@@ -27,7 +20,7 @@
             <jsp:directive.include file="/WEB-INF/menu.jspf" />
         </div>
 
-        <h1>LISTADO DE SOCIOS MOROSOS</h1>
+        <h1 class="txtCentrado">LISTADO DE SOCIOS MOROSOS</h1>
 
         <div class="w-75 ma">
             <table class="table tablaconborde tablacebra tabla-hover">
@@ -36,21 +29,23 @@
                     <th>Nombre</th>
                     <th>Libros</th>
                 </tr>
+                <!-- Itera sobre la lista de socios morosos proporcionada por el controlador -->
                 <c:forEach items="${sociosMorosos}" var="socioMoroso">
                     <tr>
-                        <td class="txtcentrado">${socioMoroso.getId()}</td>
-                        <td class="txtcentrado">${socioMoroso.getNombre()}</td>
+                        <td class="txtcentrado">${socioMoroso.id}</td>
+                        <td class="txtcentrado">${socioMoroso.nombre}</td>
                         <td class="txtcentrado">
-                            <a href="${pageContext.request.contextPath}/controllerSocio?operacion=librosSocioMoroso&idSocio=${socioMoroso.getId()}">Ver Libros</a>
+                            <a href="${pageContext.request.contextPath}/controllerAdmin?operacion=librosSocioMoroso&idSocio=${socioMoroso.id}">Ver Libros</a>
                         </td>
                     </tr>
                 </c:forEach>
             </table>
         </div>
 
+        <!-- Condicional para mostrar libros morosos solo si existen -->
         <div class="w-75 ma">
             <c:if test="${not empty librosMorosos}">
-                <h2>Préstamos No Devueltos de ${socioNombre}</h2>
+                <h2 class="txtCentrado">Préstamos No Devueltos de ${socioNombre}</h2>
                 <table class="table tablaconborde tablacebra tabla-hover">
                     <thead>
                         <tr>
@@ -64,7 +59,7 @@
                             <tr>
                                 <td class="txtcentrado">${libro.tituloLibro}</td>
                                 <td class="txtcentrado">
-                                <fmt:formatDate value="${libro.fechaPrestamo}" pattern="dd/MM/yyyy" />
+                                    <fmt:formatDate value="${libro.fechaPrestamo}" pattern="dd/MM/yyyy" />
                                 </td>
                                 <td class="txtcentrado">${libro.diasDemora}</td>
                             </tr>
@@ -74,6 +69,7 @@
             </c:if>
         </div>
         
+        <!-- Mensaje si no hay libros morosos para el socio seleccionado -->
         <c:if test="${empty librosMorosos}">
             <c:if test="${not empty socioNombre}">
                 <h2>Préstamos No Devueltos de ${socioNombre}</h2>

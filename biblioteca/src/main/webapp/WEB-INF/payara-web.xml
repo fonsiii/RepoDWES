@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE payara-web-app SYSTEM "payara-web-app_4.dtd">
+<payara-web-app>
+    <context-root>/biblioteca</context-root>
+    <security-role-mapping>
+        <role-name>socios</role-name>
+        <group-name>sociosbiblioteca</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>administrativos</role-name>
+        <group-name>adminbiblioteca</group-name>
+    </security-role-mapping>
+    <parameter-encoding default-charset="UTF-8"/>
+</payara-web-app>

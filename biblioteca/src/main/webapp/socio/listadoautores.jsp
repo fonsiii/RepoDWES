@@ -23,7 +23,7 @@
             <jsp:directive.include file="/WEB-INF/menu.jspf" />
         </div>
 
-        <h1>LISTADO DE AUTORES</h1>
+        <h1 class="txtCentrado">LISTADO DE AUTORES</h1>
 
         <div class="w-75 ma">
             <c:if test="${empty autores}">

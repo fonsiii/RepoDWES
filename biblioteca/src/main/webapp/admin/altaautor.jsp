@@ -40,7 +40,7 @@
         </c:if>
 
         <div id="formAutor" class="formulariogeneral">
-            <form name="frmAutor" method="post" action="${pageContext.request.contextPath}/controlleradmin?operacion=altaAutor">
+            <form name="frmAutor" method="post" action="${pageContext.request.contextPath}/controllerAdmin?operacion=altaAutor">
                 <fieldset id="datosAutor">
                     <legend>
                         <img src="${pageContext.request.contextPath}/resources/img/azarquiel.gif" />

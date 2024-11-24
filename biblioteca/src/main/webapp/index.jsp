@@ -9,6 +9,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<%response.sendRedirect("home.jsp");%>
+	<%response.sendRedirect("socio/home.jsp");%>
 </body>
 </html>

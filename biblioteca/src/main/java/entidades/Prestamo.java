@@ -8,6 +8,22 @@ public class Prestamo {
 	private int idSocio;
 	private Date fechaPrestamo;
 	private Date fechaLimiteDevolucion;
+	
+	private String titulo;
+	private int diasRetraso;
+	
+	public String getTitulo() {
+		return titulo;
+	}
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	public int getDiasRetraso() {
+		return diasRetraso;
+	}
+	public void setDiasRetraso(int diasRetraso) {
+		this.diasRetraso = diasRetraso;
+	}
 	public int getIdEjemplar() {
 		return idEjemplar;
 	}
@@ -35,10 +51,11 @@ public class Prestamo {
 	@Override
 	public String toString() {
 		return "Prestamo [idEjemplar=" + idEjemplar + ", idSocio=" + idSocio + ", fechaPrestamo=" + fechaPrestamo
-				+ ", fechaLimiteDevolucion=" + fechaLimiteDevolucion + ", getIdEjemplar()=" + getIdEjemplar()
-				+ ", getIdSocio()=" + getIdSocio() + ", getFechaPrestamo()=" + getFechaPrestamo()
-				+ ", getFechaLimiteDevolucion()=" + getFechaLimiteDevolucion() + ", getClass()=" + getClass()
-				+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+				+ ", fechaLimiteDevolucion=" + fechaLimiteDevolucion + ", titulo=" + titulo + ", diasRetraso="
+				+ diasRetraso + ", getTitulo()=" + getTitulo() + ", getDiasRetraso()=" + getDiasRetraso()
+				+ ", getIdEjemplar()=" + getIdEjemplar() + ", getIdSocio()=" + getIdSocio() + ", getFechaPrestamo()="
+				+ getFechaPrestamo() + ", getFechaLimiteDevolucion()=" + getFechaLimiteDevolucion() + ", getClass()="
+				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
 	
 	

@@ -32,7 +32,7 @@
 					<c:out value="${confirmaroperacion}" />
 					<script>
 						window.history.replaceState(null, null,
-								"socio/getsocio.jsp")
+								"admin/getsocio.jsp")
 					</script>
 				</p>
 			</div>
@@ -40,7 +40,7 @@
 
 		<div id="formBusquedaSocio" class="formulariogeneral">
 			<form name="frmBusquedaSocio" method="post"
-				action="${pageContext.request.contextPath}/controllerSocio?operacion=getSocio">
+				action="${pageContext.request.contextPath}/controllerAdmin?operacion=getSocio">
 				<fieldset id="busquedaSocio">
 					<legend>
 						<img
@@ -82,10 +82,10 @@
 					</tr>
 					<c:forEach items="${socioBuscado}" var="socio">
 						<tr>
-							<td class="txtcentrado">${socio.getIdSocio()}</td>
-							<td class="txtcentrado">${socio.getNombre()}</td>
-							<td class="txtcentrado">${socio.getDireccion()}</td>
-							<td class="txtcentrado"><a href="${pageContext.request.contextPath}/controllerSocio?operacion=modificarSocio&idSocio=${socio.getIdSocio()}">Editar</a>
+							<td class="txtcentrado">${socio.idSocio}</td>
+							<td class="txtcentrado">${socio.nombre}</td>
+							<td class="txtcentrado">${socio.direccion}</td>
+							<td class="txtcentrado"><a href="${pageContext.request.contextPath}/controllerAdmin?operacion=modificarSocio&idSocio=${socio.idSocio}">Editar</a>
 
 							</td>
 						</tr>

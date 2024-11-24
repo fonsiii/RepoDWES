@@ -21,23 +21,18 @@ public class DaoSocioMoroso {
         try {
             con = conexion.getConexion();
 
-            String ordenSQL = "SELECT \n"
-                    + "    s.IDSOCIO, \n"
-                    + "    s.NOMBRE\n"
-                    + "FROM \n"
-                    + "    SOCIO s\n"
-                    + "INNER JOIN PRESTAMO p ON s.IDSOCIO = p.IDSOCIO\n"
-                    + "WHERE \n"
-                    + "    p.FECHALIMITEDEVOLUCION < SYSDATE\n"
-                    + "    AND NOT EXISTS (\n"
-                    + "        SELECT 1 \n"
-                    + "        FROM DEVOLUCION d \n"
-                    + "        WHERE d.IDSOCIO = p.IDSOCIO \n"
-                    + "        AND d.IDEJEMPLAR = p.IDEJEMPLAR\n"
-                    + "    )\n"
-                    + "GROUP BY \n"
-                    + "    s.IDSOCIO, \n"
-                    + "    s.NOMBRE";
+            String ordenSQL = "select s.idsocio, s.nombre\n"
+            		+ "from socio s\n"
+            		+ "inner join prestamo p on s.idsocio = p.idsocio\n"
+            		+ "where\n"
+            		+ "p.fechalimitedevolucion < sysdate\n"
+            		+ "and not exists (\n"
+            		+ "select 1\n"
+            		+ "from devolucion d\n"
+            		+ "where d.idsocio = p.idsocio\n"
+            		+ "and d.idejemplar = p.idejemplar\n"
+            		+ ") group by s.idsocio, s.nombre\n"
+            		+ "order by s.idsocio";
 
             st = con.prepareStatement(ordenSQL);
             rs = st.executeQuery();

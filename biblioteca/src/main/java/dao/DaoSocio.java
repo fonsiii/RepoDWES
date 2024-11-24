@@ -12,40 +12,54 @@ import entidades.Socio;
 public class DaoSocio {
 
 
-    public ArrayList<Socio> listadoSocios() throws SQLException, Exception {
-        ArrayList<Socio> listadoSocios = new ArrayList<>(); 
-        Conexion conexion = new Conexion();
-        Connection con = null; 
-        ResultSet rs = null; 
-        PreparedStatement st = null; 
-        
-        try {
-            con = conexion.getConexion();
+	public ArrayList<Socio> listadoSocios(int paginaActual, int registrosPorPagina) throws SQLException, Exception {
+	    ArrayList<Socio> listadoSocios = new ArrayList<>();
+	    Conexion conexion = new Conexion();
+	    Connection con = null;
+	    ResultSet rs = null;
+	    PreparedStatement st = null;
 
-            String ordenSQL = "SELECT * FROM SOCIO ORDER BY IDSOCIO";
-            st = con.prepareStatement(ordenSQL); 
-            rs = st.executeQuery(); 
-            
-            while (rs.next()) {
-                Socio miSocio = new Socio();
-                miSocio.setIdSocio(rs.getInt("IDSOCIO")); 
-                miSocio.setNombre(rs.getString("NOMBRE")); 
-                miSocio.setDireccion(rs.getString("DIRECCION"));
-                miSocio.setEmail(rs.getString("EMAIL"));
-                miSocio.setVersion(rs.getInt("VERSION")); 
-                listadoSocios.add(miSocio); 
-            }
-        } catch (SQLException e) {
-            throw e; 
-        } catch (Exception ex) {
-            throw ex; 
-        } finally {
-            if (rs != null) rs.close(); 
-            if (st != null) st.close(); 
-            if (con != null) con.close(); 
-        }
-        return listadoSocios; 
-    }
+	    try {
+	        con = conexion.getConexion();
+
+	        int offset = paginaActual * registrosPorPagina + 1;
+	        int limit = (paginaActual + 1) * registrosPorPagina;
+	        //String ordenSQL = "SELECT * FROM SOCIO ORDER BY IDSOCIO OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+	        String ordenSQL = 
+	            "SELECT * FROM ( " +
+	            "   SELECT a.*, ROWNUM rnum FROM ( " +
+	            "       SELECT * FROM SOCIO ORDER BY IDSOCIO " +
+	            "   ) a WHERE ROWNUM <= ? " +
+	            ") WHERE rnum >= ?";
+
+	        st = con.prepareStatement(ordenSQL);
+	        st.setInt(1, limit);
+	        st.setInt(2, offset);
+
+	        rs = st.executeQuery();
+
+	        while (rs.next()) {
+	            Socio miSocio = new Socio();
+	            miSocio.setIdSocio(rs.getInt("IDSOCIO"));
+	            miSocio.setNombre(rs.getString("NOMBRE"));
+	            miSocio.setDireccion(rs.getString("DIRECCION"));
+	            miSocio.setEmail(rs.getString("EMAIL"));
+	            miSocio.setVersion(rs.getInt("VERSION"));
+	            listadoSocios.add(miSocio);
+	        }
+	    } catch (SQLException e) {
+	        throw e;
+	    } catch (Exception ex) {
+	        throw ex;
+	    } finally {
+	        if (rs != null) rs.close();
+	        if (st != null) st.close();
+	        if (con != null) con.close();
+	    }
+	    return listadoSocios;
+	}
+
+
 
 
     public void insertaSocio(Socio s) throws SQLException, Exception {
@@ -181,4 +195,28 @@ public class DaoSocio {
         }
     }
 
-}
+    public int contarNumeroSocios() throws SQLException, Exception{
+    	int numSocios = 0;
+        Conexion conexion = new Conexion();
+        Connection con = null;
+        PreparedStatement st = null;
+    	ResultSet rs = null;
+    	try {
+    		con = conexion.getConexion();
+        	String sql = "SELECT COUNT(*) FROM SOCIO";
+            st = con.prepareStatement(sql);
+    		rs = st.executeQuery();
+    		if(rs.next()) {
+    			numSocios = rs.getInt(1);
+    		}
+    	}catch (SQLException e) {
+            throw e;
+        } catch(Exception ex) {
+            throw ex;
+        } finally {
+            if (st != null) st.close();
+            if (con != null) con.close();
+        }
+    	return numSocios;
+    }
+    }
